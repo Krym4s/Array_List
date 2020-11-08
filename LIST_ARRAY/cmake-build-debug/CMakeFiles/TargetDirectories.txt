@@ -1,0 +1,3 @@
+C:/Users/egolg/CLionProjects/LIST_ARRAY/cmake-build-debug/CMakeFiles/LIST_ARRAY.dir
+C:/Users/egolg/CLionProjects/LIST_ARRAY/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/egolg/CLionProjects/LIST_ARRAY/cmake-build-debug/CMakeFiles/rebuild_cache.dir

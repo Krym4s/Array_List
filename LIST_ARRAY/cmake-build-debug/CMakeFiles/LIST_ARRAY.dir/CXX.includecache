@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/egolg/CLionProjects/LIST_ARRAY/cmake-build-debug/IsE_Array_List.cpp
+IsE_Array_List.h
+C:/Users/egolg/CLionProjects/LIST_ARRAY/cmake-build-debug/IsE_Array_List.h
+
+C:/Users/egolg/CLionProjects/LIST_ARRAY/cmake-build-debug/IsE_Array_List.h
+stdio.h
+-
+assert.h
+-
+stdlib.h
+-
+cmath
+-
+
+C:/Users/egolg/CLionProjects/LIST_ARRAY/main.cpp
+iostream
+-
+cmake-build-debug/IsE_Array_List.h
+C:/Users/egolg/CLionProjects/LIST_ARRAY/cmake-build-debug/IsE_Array_List.h
+

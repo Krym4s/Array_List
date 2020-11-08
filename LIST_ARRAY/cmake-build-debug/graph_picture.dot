@@ -1,0 +1,30 @@
+digraph LIST{
+	rankdir = TB;
+0 [shape=record,color="yellow",label=" { 0 |  <prev> 0 | <current> 0 | <next> 0 } "];
+1 [shape=record,color="blue",label=" { 124 |  <prev> 0 | <current> 1 | <next> 2 } "];
+2 [shape=record,color="blue",label=" { 12 |  <prev> 1 | <current> 2 | <next> 3 } "];
+3 [shape=record,color="blue",label=" { 14 |  <prev> 2 | <current> 3 | <next> 0 } "];
+4 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 4 | <next> 5 } "];
+5 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 5 | <next> 6 } "];
+6 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 6 | <next> 7 } "];
+7 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 7 | <next> 8 } "];
+8 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 8 | <next> 0 } "];
+
+
+{rank = same;1;2;3;}
+{rank = same;0;}
+{rank = same;4;5;6;7;8;}
+	0:prev -> 0;
+	0:next -> 0;
+	1:prev -> 0;
+	1:next -> 2;
+	2:prev -> 1;
+	2:next -> 3;
+	3:prev -> 2;
+	3:next -> 0;
+	4:next -> 5;
+	5:next -> 6;
+	6:next -> 7;
+	7:next -> 8;
+	8:next -> 0;
+}
