@@ -10,7 +10,7 @@ Executed on line 34
 
 	{
 		 physical number = 0
-		 value           = 0
+		 value           = 1.#QNAN
 		 next            = 0
 		 prev            = 0
 		 status          = 3

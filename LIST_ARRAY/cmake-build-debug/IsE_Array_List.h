@@ -54,7 +54,7 @@ enum memberStatus
     HOLY = 3
 };
 
-double EPSILON = 1e-10;
+const double EPS = 1e-10;
 
 const double POISON = NAN;
 

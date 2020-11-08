@@ -546,6 +546,8 @@ int NormalizeListOrder (struct List* thou)
     if (!normalOrder)
         return NO_FREE_MEMORY;
 
+    normalOrder[0] = POISON;
+
     int index = thou->headOfValue;
 
     for (int i = 1; i <= thou->sz; ++i)
@@ -585,7 +587,7 @@ int FindValue (struct List* thou, double value)
     int index = thou->headOfValue;
     while (index != 0)
     {
-        if (fabs(thou->values[index] - value) < EPSILON)
+        if (fabs(thou->values[index] - value) < 1e-10)
             return index;
 
         index = thou->next[index];
