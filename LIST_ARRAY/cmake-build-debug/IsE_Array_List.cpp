@@ -17,18 +17,23 @@ int ListConstruct (unsigned int bufferSize, struct List* thou, FILE* list_logs, 
     thou->headOfValue = 0;
     thou->tailOfValue = 0;
 
+    thou->data = (ListMember*) calloc (sizeof(*thou->data), bufferSize + 1);
+
     for (int i = 0; i <= bufferSize; i++)
-        thou->values[i] = POISON;
+        thou->data[i].values = POISON;
 
 
     thou->next = (int*) calloc (sizeof(*thou->next), bufferSize + 1);
     for (int i = 1; i < bufferSize; i++)
-        *(thou->next + i) = (i + 1);
+        thou->data[i].next = (i + 1);
 
-    *(thou->next + bufferSize) = 0;
+    thou->data[bufferSize].next = 0;
     thou->prev = (int*) calloc (sizeof(*thou->prev), bufferSize + 1);
     for (int i = 1; i <= bufferSize; i++)
-        *(thou->prev + i) = -1;
+    {
+        thou->data[i].prev = -1;
+        thou->data[i].status = FREE;
+    }
 
     thou->headOfFree = 1;
     thou->tailOfFree = bufferSize;
@@ -40,7 +45,7 @@ int ListConstruct (unsigned int bufferSize, struct List* thou, FILE* list_logs, 
     thou->normalized = true;
 
     thou->status = (int*) calloc (sizeof(*thou->next), bufferSize + 1);
-    thou->status[0] = HOLY;
+    thou->data[0].status = HOLY;
 
     return NO_ERRORS;
 }
@@ -85,20 +90,19 @@ int ListInit (struct List* thou)
     return NO_ERRORS;
 }
 
-int InsertAfterIndex (struct List* thou, double value, int position)
-{
+int InsertAfterIndex (struct List* thou, double value, int position) {
     assert (thou);
 
     ASSERTED
 
-    if (thou->next[position] != 0 && position !=0)
-        return InsertInTheMiddleAfterIndex (thou, value, position);
-
-    if (position == 0)
-        return InsertInTheBegin (thou, value, position);
-
-    if (position == thou->tailOfValue)
-        return InsertInTheEnd (thou, value, position);
+    if (thou->data[position].next != 0 && position != 0) { printf("middle");
+    return InsertInTheMiddleAfterIndex(thou, value, position);
+}
+    if (position == 0) { printf("begin;");
+        return InsertInTheBegin(thou, value, position);
+    }
+    if (position == thou->tailOfValue){printf ("last");
+        return InsertInTheEnd (thou, value, position);}
 
     ASSERTED
 
@@ -109,7 +113,7 @@ int InsertBeforeIndex (struct List* thou, double value, int position)
 {
     assert (thou);
     ASSERTED
-    return InsertAfterIndex (thou, value, thou->prev[position]);
+    return InsertAfterIndex (thou, value, thou->data[position].prev);
 }
 
 int DeleteCurrentValue (struct List* thou, int position)
@@ -151,26 +155,27 @@ int ListVerify (struct List* thou)
 
     while (tempsz > 1)
     {
-        if (thou->prev[thou->next[tempPointer]] != tempPointer)
+        if (thou->data[thou->data[tempPointer].next].prev != tempPointer)
         {
-            thou->status[tempPointer] = ERROR;
+            thou->data[tempPointer].status = ERROR;printf ("aac");
             return LIST_INTERRUPT;
         }
 
         tempsz--;
-        tempPointer = thou->next[tempPointer];
+        tempPointer = thou->data[tempPointer].next;
     }
 
     tempsz = thou->sz;
     tempPointer = thou->tailOfValue;
-    while (tempsz > 1) {
-        if (thou->next[thou->prev[tempPointer]] != tempPointer)
+    while (tempsz > 1)
+    {
+        if (thou->data[thou->data[tempPointer].prev].next != tempPointer)
         {
-            thou->status[tempPointer] = ERROR;
+            thou->data[tempPointer].status = ERROR;printf ("aad");
             return LIST_INTERRUPT;
         }
         tempsz--;
-        tempPointer = thou->prev[tempPointer];
+        tempPointer = thou->data[tempPointer].prev;
     }
 
     tempsz = thou->sz;
@@ -180,7 +185,7 @@ int ListVerify (struct List* thou)
         if (tempPointer == 0)
             return LIST_INTERRUPT;
         tempsz--;
-        tempPointer = thou->next[tempPointer];
+        tempPointer = thou->data[tempPointer].next;
     }
     if (tempPointer != 0)
         return LIST_INTERRUPT;
@@ -192,43 +197,43 @@ int ListVerify (struct List* thou)
         if (tempPointer == 0)
             return LIST_INTERRUPT;
         tempsz--;
-        tempPointer = thou->prev[tempPointer];
+        tempPointer = thou->data[tempPointer].prev;
     }
     if (tempPointer != 0)
         return LIST_INTERRUPT;
 
-    tempsz =thou->capacity - thou->sz;
+    tempsz =thou->capacity - thou->sz; printf ("%d\n", tempsz);
     tempPointer = thou->headOfFree;
     while (tempsz > 0)
     {
-        if (tempPointer == 0 || thou->prev[tempPointer] != -1)
+        if (tempPointer == 0 || thou->data[tempPointer].prev != -1)
         {
-            printf ("aaa");
-            thou->status[tempPointer] = ERROR;
+            printf ("aaa %d\n", thou->headOfFree);
+            thou->data[tempPointer].status = ERROR;
 
             while (tempsz > 0)
             {
-                thou->status[tempPointer] = ERROR;
+                thou->data[tempPointer].status = ERROR;
                 tempsz--;
-                tempPointer = thou->next[tempPointer];
+                tempPointer = thou->data[tempPointer].next;
             }
             return FREE_MEMORY_INTERRUPTION;
         }
         tempsz--;
-        tempPointer = thou->next[tempPointer];
+        tempPointer = thou->data[tempPointer].next;
     }
 
     if (tempPointer != 0)
     {
-        printf ("aaa");
-        thou->status[tempPointer] = ERROR;
+        printf ("aab");
+        thou->data[tempPointer].status = ERROR;
         tempsz =thou->capacity - thou->sz;
         tempPointer = thou->headOfFree;
         while (tempsz > 0)
         {
-            thou->status[tempPointer] = ERROR;
+            thou->data[tempPointer].status = ERROR;
             tempsz--;
-            tempPointer = thou->next[tempPointer];
+            tempPointer = thou->data[tempPointer].next;
         }
         return FREE_MEMORY_INTERRUPTION;
     }
@@ -244,17 +249,17 @@ int InsertInTheMiddleAfterIndex (struct List* thou, double value, int position)
     ASSERTED
 
     int oldHeadOfFree = thou->headOfFree;
-    thou->status[oldHeadOfFree] = BLOCKED;
-    int newHeadOfFree = thou->next[thou->headOfFree];
+    thou->data[oldHeadOfFree].status = BLOCKED;
+    int newHeadOfFree = thou->data[thou->headOfFree].next;
 
-    thou->values[thou->headOfFree] = value;
+    thou->data[thou->headOfFree].values = value;
     thou->sz++;
 
-    thou->next[thou->headOfFree] = thou->next[position];
-    thou->prev[thou->headOfFree] = thou->prev[thou->next[position]];
+    thou->data[thou->headOfFree].next = thou->data[position].next;
+    thou->data[thou->headOfFree].prev = thou->data[thou->data[position].next].prev;
 
-    thou->prev[thou->next[position]] = thou->headOfFree;
-    thou->next[position] = thou->headOfFree;
+    thou->data[thou->data[position].next].prev = thou->headOfFree;
+    thou->data[position].next = thou->headOfFree;
 
     thou->headOfFree = newHeadOfFree;
 
@@ -275,17 +280,17 @@ int InsertInTheBegin (struct List* thou, double value, int position)
     ASSERTED
 
     int oldHeadOfFree = thou->headOfFree;
-    thou->status[oldHeadOfFree] = BLOCKED;
-    int newHeadOfFree = thou->next[thou->headOfFree];
-    thou->values[thou->headOfFree] = value;
+    thou->data[oldHeadOfFree].status = BLOCKED;
+    int newHeadOfFree = thou->data[thou->headOfFree].next;
+    thou->data[thou->headOfFree].values = value;
 
     if (thou->sz == 0)
     {
         thou->sz++;
         thou->tailOfValue = thou->headOfFree;
         thou->headOfValue = thou->headOfFree;
-        thou->next[thou->headOfFree] = 0;
-        thou->prev[thou->headOfFree] = 0;
+        thou->data[thou->headOfFree].next = 0;
+        thou->data[thou->headOfFree].prev = 0;
         thou->headOfFree = newHeadOfFree;
 
         if (thou->sz == thou->capacity - 1)
@@ -299,9 +304,9 @@ int InsertInTheBegin (struct List* thou, double value, int position)
     else
     {
         thou->sz++;
-        thou->next[thou->headOfFree] = thou->headOfValue;
-        thou->prev[thou->headOfValue] = thou->headOfFree;
-        thou->prev[thou->headOfFree] = 0;
+        thou->data[thou->headOfFree].next = thou->headOfValue;
+        thou->data[thou->headOfValue].prev = thou->headOfFree;
+        thou->data[thou->headOfFree].prev = 0;
         thou->headOfValue = thou->headOfFree;
         thou->headOfFree = newHeadOfFree;
 
@@ -323,13 +328,13 @@ int InsertInTheEnd (struct List* thou, double value, int position)
     ASSERTED
 
     int oldHeadOfFree = thou->headOfFree;
-    thou->status[oldHeadOfFree] = BLOCKED;
-    int newHeadOfFree = thou->next[thou->headOfFree];
-    thou->values[thou->headOfFree] = value;
+    thou->data[oldHeadOfFree].status = BLOCKED;
+    int newHeadOfFree = thou->data[thou->headOfFree].next;
+    thou->data[thou->headOfFree].values = value;
     thou->sz++;
-    thou->next[position] = thou->headOfFree;
-    thou->next[thou->headOfFree] = 0;
-    thou->prev[thou->headOfFree] = position;
+    thou->data[position].next = thou->headOfFree;
+    thou->data[thou->headOfFree].next = 0;
+    thou->data[thou->headOfFree].prev = position;
     thou->tailOfValue = oldHeadOfFree;
     thou->headOfFree = newHeadOfFree;
 
@@ -349,14 +354,14 @@ int DeleteFromEnd (struct List* thou)
     ASSERTED
 
     int position = thou->tailOfValue;
-    thou->status[position] = FREE;
+    thou->data[position].status = FREE;
     thou->sz--;
-    thou->next[thou->prev[position]] = 0;
-    thou->tailOfValue = thou->prev[position];
-    thou->prev[position] = -1;
-    thou->next[position] = 0;
-    thou->values[position] = NAN;
-    thou->next[thou->tailOfFree] = position;
+    thou->data[thou->data[position].prev].next = 0;
+    thou->tailOfValue = thou->data[position].prev;
+    thou->data[position].prev = -1;
+    thou->data[position].next = 0;
+    thou->data[position].values = POISON;
+    thou->data[thou->tailOfFree].next = position;
     thou->tailOfFree = position;
 
     ASSERTED
@@ -368,18 +373,19 @@ int DeleteFromBegin (struct List* thou)
 {
     assert (thou);
     thou->normalized = false;
+    printf ("what");
 
     ASSERTED
 
     int position = thou->headOfValue;
-    thou->status[position] = FREE;
+    thou->data[position].status = FREE;
     thou->sz--;
-    thou->prev[thou->next[position]] = 0;
-    thou->headOfValue = thou->next[thou->headOfValue];
-    thou->prev[position] = -1;
-    thou->next[position] = 0;
-    thou->values[position] = NAN;
-    thou->next[thou->tailOfFree] = position;
+    thou->data[thou->data[position].next].prev = 0;
+    thou->headOfValue = thou->data[thou->headOfValue].next;
+    thou->data[position].prev = -1;
+    thou->data[position].next = 0;
+    thou->data[position].values = POISON;
+    thou->data[thou->tailOfFree].next = position;
     thou->tailOfFree = position;
 
     ASSERTED
@@ -391,17 +397,17 @@ int DeleteFromMiddle (struct List* thou, int position)
 {
     assert (thou);
     thou->normalized = false;
-
+    printf ("mid del");
     ASSERTED
 
-    thou->status[position] = FREE;
+    thou->data[position].status = FREE;
     thou->sz--;
-    thou->next[thou->prev[position]] = thou->next[position];
-    thou->prev[thou->next[position]] = thou->prev[position];
-    thou->prev[position] = -1;
-    thou->next[position] = 0;
-    thou->values[position] = POISON;
-    thou->next[thou->tailOfFree] = position;
+    thou->data[thou->data[position].prev].next = thou->data[position].next;
+    thou->data[thou->data[position].next].prev = thou->data[position].prev;
+    thou->data[position].prev = -1;
+    thou->data[position].next = 0;
+    thou->data[position].values = POISON;
+    thou->data[thou->tailOfFree].next = position;
     thou->tailOfFree = position;
 
     ASSERTED
@@ -427,10 +433,10 @@ int TextDump (struct List* thou, char* reason, int line)
     {
         fprintf (thou->list_logs, "\n\t{\n");
         fprintf (thou->list_logs, "\t\t physical number = %d\n", i);
-        fprintf (thou->list_logs, "\t\t value           = %lg\n", thou->values[i]);
-        fprintf (thou->list_logs, "\t\t next            = %d\n", thou->next[i]);
-        fprintf (thou->list_logs, "\t\t prev            = %d\n", thou->prev[i]);
-        fprintf (thou->list_logs, "\t\t status          = %d\n", thou->status[i]);
+        fprintf (thou->list_logs, "\t\t value           = %lg\n", thou->data[i].values);
+        fprintf (thou->list_logs, "\t\t next            = %d\n", thou->data[i].next);
+        fprintf (thou->list_logs, "\t\t prev            = %d\n", thou->data[i].prev);
+        fprintf (thou->list_logs, "\t\t status          = %d\n", thou->data[i].status);
         fprintf (thou->list_logs, "\t}\n");
     }
     fprintf (thou->list_logs, "}\n");
@@ -451,14 +457,14 @@ int PictureDump (struct List* thou, char* reason, int line)
     for (int i = 0; i <= thou->capacity; i++)
     {
         fprintf (thou->graph_logs, "%d [shape=record,color=",i);
-        switch (thou->status[i])
+        switch (thou->data[i].status)
         {
             case FREE: fprintf (thou->graph_logs, "\"green\""); break;
             case HOLY: fprintf (thou->graph_logs, "\"yellow\""); break;
             case BLOCKED: fprintf (thou->graph_logs, "\"blue\""); break;
             case ERROR: fprintf (thou->graph_logs, "\"red\""); break;
         }
-        fprintf (thou->graph_logs,",label=\" { %lg |  <prev> %d | <current> %d | <next> %d } \"];\n",thou->values[i], thou->prev[i], i, thou->next[i]);
+        fprintf (thou->graph_logs,",label=\" { %lg |  <prev> %d | <current> %d | <next> %d } \"];\n",thou->data[i].values, thou->data[i].prev, i, thou->data[i].next);
     }
 
     fprintf (thou->graph_logs, "\n");
@@ -472,11 +478,11 @@ int PictureDump (struct List* thou, char* reason, int line)
     for (int i = 0; i <= thou->capacity; i++)
     {
 
-        if (thou->prev[i] != -1)
-            fprintf (thou->graph_logs,"\t" "%d:prev -> %d;\n", i, thou->prev[i]);
+        if (thou->data[i].prev != -1)
+            fprintf (thou->graph_logs,"\t" "%d:prev -> %d;\n", i, thou->data[i].prev);
 
-        if (thou->next[i] != -1)
-            fprintf (thou->graph_logs,"\t" "%d:next -> %d;\n", i, thou->next[i]);
+        if (thou->data[i].next != -1)
+            fprintf (thou->graph_logs,"\t" "%d:next -> %d;\n", i, thou->data[i].next);
     }
 
     fprintf (thou->graph_logs,"}\n");
@@ -494,7 +500,7 @@ void SetSameRank (struct List* thou, int status)
 
     fprintf (thou->graph_logs, "{rank = same;");
     for (int i = 0; i <= thou->capacity; i++)
-        if (thou->status[i] == status)
+        if (thou->data[i].status == status)
             fprintf (thou->graph_logs, "%d;", i);
 
     fprintf (thou->graph_logs, "}");
@@ -504,27 +510,13 @@ int EnlargeList (struct List* thou)
 {
     assert (thou);
 
-    int* tempIntPointer = (int*) realloc (thou->next, sizeof (*tempIntPointer) * (2 *  thou->capacity + 1));
-    if (!tempIntPointer)
+    ListMember* tempMemberPointer = (ListMember*) realloc (thou->data, sizeof(*tempMemberPointer) * ( 2 * thou->capacity + 1));
+    if (!tempMemberPointer)
         return NO_FREE_MEMORY;
-    thou->next = tempIntPointer;
 
-    tempIntPointer = (int*) realloc (thou->prev, sizeof (*tempIntPointer) * (2 *  thou->capacity + 1));
-    if (!tempIntPointer)
-        return NO_FREE_MEMORY;
-    thou->prev = tempIntPointer;
+    thou->data = tempMemberPointer;
 
-    tempIntPointer = (int*) realloc (thou->status, sizeof (*tempIntPointer) * (2 *  thou->capacity + 1));
-    if (!tempIntPointer)
-        return NO_FREE_MEMORY;
-    thou->status = tempIntPointer;
-
-    double* tempDoublePointer = (double *) realloc (thou->values, sizeof (*tempDoublePointer) * (2 *  thou->capacity + 1));
-    if (!tempDoublePointer)
-        return NO_FREE_MEMORY;
-    thou->values = tempDoublePointer;
-
-    thou->next[thou->tailOfFree] = thou->capacity + 1;
+    thou->data[thou->tailOfFree].next = thou->capacity + 1;
 
     PrepareFreeMemory (thou);
 
@@ -533,15 +525,15 @@ int EnlargeList (struct List* thou)
 
 void PrepareFreeMemory (struct List* thou)
 {
-    thou->next[thou->tailOfFree] = thou->capacity + 1;
+    thou->data[thou->tailOfFree].next = thou->capacity + 1;
     thou->tailOfFree = thou->capacity * 2;
 
     for (int i = thou->capacity + 1; i <= thou->capacity*2; ++i)
     {
-        thou->values[i] = POISON;
-        thou->prev[i] = -1;
-        thou->status[i] = FREE;
-        thou->next[i] = (i + 1) % (thou->capacity*2 + 1);
+        thou->data[i].values = POISON;
+        thou->data[i].prev = -1;
+        thou->data[i].status = FREE;
+        thou->data[i].next = (i + 1) % (thou->capacity*2 + 1);
     }
 
     thou->capacity *= 2;
@@ -562,8 +554,8 @@ int NormalizeListOrder (struct List* thou)
 
     for (int i = 1; i <= thou->sz; ++i)
     {
-        normalOrder[i] = thou->values[index];
-        index = thou->next[index];
+        normalOrder[i] = thou->data[index].values;
+        index = thou->data[index].next;
     }
 
     for (int i = thou->sz + 1; i <= thou->capacity; ++i)
@@ -571,16 +563,16 @@ int NormalizeListOrder (struct List* thou)
 
     for (int i = 1; i <= thou->sz; ++i)
     {
-        thou->next[i] = (i + 1) % (thou->sz + 1);
-        thou->prev[i] = i - 1;
-        thou->status[i] = BLOCKED;
+        thou->data[i].next = (i + 1) % (thou->sz + 1);
+        thou->data[i].prev = i - 1;
+        thou->data[i].status = BLOCKED;
     }
 
     for (int i = thou->sz + 1; i <= thou->capacity; ++i)
     {
-        thou->next[i] = (i + 1) % (thou->capacity + 1);
-        thou->prev[i] = -1;
-        thou->status[i] = FREE;
+        thou->data[i].next = (i + 1) % (thou->capacity + 1);
+        thou->data[i].prev = -1;
+        thou->data[i].status = FREE;
     }
     free (thou->values);
     thou->values = normalOrder;
@@ -598,10 +590,10 @@ int FindValue (struct List* thou, double value)
     int index = thou->headOfValue;
     while (index != 0)
     {
-        if (fabs(thou->values[index] - value) < 1e-10)
+        if (fabs(thou->data[index].values - value) < 1e-10)
             return index;
 
-        index = thou->next[index];
+        index = thou->data[index].next;
     }
 
     return 0;
@@ -623,6 +615,18 @@ char* ErrorName (int error)
         case NO_FREE_MEMORY: return ARGNAME (NO_FREE_MEMORY);
         default: return ARGNAME (UNKNOWN_ERROR);
     }
+}
+
+int FindPhysIndex (struct List* thou, int logicIndex)
+{
+    if (thou->normalized)
+        return logicIndex;
+    int physIndex = thou->headOfValue;
+    for (int i = 1; i < logicIndex; i++)
+    {
+        physIndex = thou->data[physIndex].next;
+    }
+    return physIndex;
 }
 
 #undef ASSERTED

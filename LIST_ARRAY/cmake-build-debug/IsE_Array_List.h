@@ -9,12 +9,22 @@
 #ifndef LIST_ARRAY_ISE_ARRAY_LIST_H
 #define LIST_ARRAY_ISE_ARRAY_LIST_H
 
+struct ListMember
+{
+    double values;
+    int next;
+    int prev;
+    int status;
+};
+
 struct List
 {
     double* values;
     int* next;
     int* prev;
     int* status;
+
+    struct ListMember* data;
 
     int headOfValue;
     int tailOfValue;
@@ -33,6 +43,8 @@ struct List
 
     int errCode;
 };
+
+
 
 enum List_errors
 {
@@ -102,6 +114,8 @@ int NormalizeListOrder (struct List* thou);
 int FindValue (struct List* thou, double value);
 
 char* ErrorName (int error);
+
+int FindPhysIndex (struct List* thou, int logicIndex);
 
 //int textDump (struct List* )
 #endif //LIST_ARRAY_ISE_ARRAY_LIST_H
