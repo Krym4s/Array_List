@@ -36,14 +36,19 @@ struct List
 
 enum List_errors
 {
-    NO_ERRORS = 0,
-    DOUBLE_INSERT = -1,
-    DELETE_NOTHING = -2,
-    LIST_INTERRUPT = -3,
-    FREE_MEMORY_INTERRUPTION = -4,
-    UNKNOWN_ERROR = -5,
-    NO_LIST = -6,
-    NO_FREE_MEMORY = -7
+    NO_ERRORS                   =  0,
+    DOUBLE_INSERT               = -1,
+    DELETE_NOTHING              = -2,
+    LIST_INTERRUPT              = -3,
+    FREE_MEMORY_INTERRUPTION    = -4,
+    UNKNOWN_ERROR               = -5,
+    NO_LIST                     = -6,
+    NO_FREE_MEMORY              = -7,
+    BAD_SIZE                    = -8,
+    BAD_TAIL_OF_VALUE           = -9,
+    BAD_TAIL_OF_FREE            = -10,
+    BAD_HEAD_OF_VALUE           = -11,
+    BAD_HEAD_OF_FREE            = -12
 };
 
 enum memberStatus
@@ -80,11 +85,11 @@ int DeleteFromBegin (struct List* thou);
 
 int DeleteFromMiddle (struct List* thou, int position);
 
-void TextDump (struct List* thou, char* reason, int line);
+int TextDump (struct List* thou, char* reason, int line);
 
-void PictureDump (struct List* thou, char* reason, int line);
+int PictureDump (struct List* thou, char* reason, int line);
 
-int ListVerificate (struct List* thou);
+int ListVerify (struct List* thou);
 
 void SetSameRank (struct List* thou, int status);
 
@@ -95,6 +100,8 @@ void PrepareFreeMemory (struct List* thou);
 int NormalizeListOrder (struct List* thou);
 
 int FindValue (struct List* thou, double value);
+
+char* ErrorName (int error);
 
 //int textDump (struct List* )
 #endif //LIST_ARRAY_ISE_ARRAY_LIST_H

@@ -5,6 +5,8 @@
 
 #include "IsE_Array_List.h"
 
+#define ASSERTED !ListVerify (thou) || PictureDump (thou, ErrorName (thou->errCode), __LINE__);
+
 
 int ListConstruct (unsigned int bufferSize, struct List* thou, FILE* list_logs, FILE* graph_logs, char* graph_logs_name)
 {
@@ -87,8 +89,7 @@ int InsertAfterIndex (struct List* thou, double value, int position)
 {
     assert (thou);
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     if (thou->next[position] != 0 && position !=0)
         return InsertInTheMiddleAfterIndex (thou, value, position);
@@ -99,8 +100,7 @@ int InsertAfterIndex (struct List* thou, double value, int position)
     if (position == thou->tailOfValue)
         return InsertInTheEnd (thou, value, position);
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     return UNKNOWN_ERROR;
 }
@@ -108,30 +108,42 @@ int InsertAfterIndex (struct List* thou, double value, int position)
 int InsertBeforeIndex (struct List* thou, double value, int position)
 {
     assert (thou);
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
     return InsertAfterIndex (thou, value, thou->prev[position]);
 }
 
 int DeleteCurrentValue (struct List* thou, int position)
 {
     assert (thou);
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
     if (position == thou->headOfValue)
         return  DeleteFromBegin (thou);
     if (position == thou->tailOfValue)
         return DeleteFromEnd (thou);
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     return DeleteFromMiddle (thou, position);
 }
 
-int ListVerificate (struct List* thou)
+int ListVerify (struct List* thou)
 {
     if (!thou)
         return NO_LIST;
+
+    if (thou->sz > thou->capacity)
+        return BAD_SIZE;
+
+    if (thou->headOfValue > thou->capacity)
+        return BAD_HEAD_OF_VALUE;
+
+    if (thou->tailOfValue > thou->capacity)
+        return BAD_TAIL_OF_VALUE;
+
+    if (thou->headOfFree > thou->capacity)
+        return BAD_HEAD_OF_FREE;
+
+    if (thou->tailOfFree > thou->capacity)
+        return BAD_TAIL_OF_FREE;
 
     int tempsz = thou->sz;
 
@@ -228,8 +240,9 @@ int InsertInTheMiddleAfterIndex (struct List* thou, double value, int position)
 {
     assert (thou);
     thou->normalized = false;
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+
+    ASSERTED
+
     int oldHeadOfFree = thou->headOfFree;
     thou->status[oldHeadOfFree] = BLOCKED;
     int newHeadOfFree = thou->next[thou->headOfFree];
@@ -249,8 +262,7 @@ int InsertInTheMiddleAfterIndex (struct List* thou, double value, int position)
         if (EnlargeList (thou))
             return NO_FREE_MEMORY;
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     return oldHeadOfFree;
 }
@@ -259,8 +271,8 @@ int InsertInTheBegin (struct List* thou, double value, int position)
 {
     assert (thou);
     thou->normalized = false;
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+
+    ASSERTED
 
     int oldHeadOfFree = thou->headOfFree;
     thou->status[oldHeadOfFree] = BLOCKED;
@@ -280,8 +292,8 @@ int InsertInTheBegin (struct List* thou, double value, int position)
             if (EnlargeList (thou))
                 return NO_FREE_MEMORY;
 
-        if (ListVerificate(thou))
-            PictureDump (thou, "error", __LINE__);
+        ASSERTED
+
         return oldHeadOfFree;
     }
     else
@@ -297,8 +309,8 @@ int InsertInTheBegin (struct List* thou, double value, int position)
             if (EnlargeList (thou))
                 return NO_FREE_MEMORY;
 
-        if (ListVerificate(thou))
-            PictureDump (thou, "error", __LINE__);
+        ASSERTED
+
         return  oldHeadOfFree;
     }
 
@@ -307,8 +319,8 @@ int InsertInTheBegin (struct List* thou, double value, int position)
 int InsertInTheEnd (struct List* thou, double value, int position)
 {
     assert (thou);
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+
+    ASSERTED
 
     int oldHeadOfFree = thou->headOfFree;
     thou->status[oldHeadOfFree] = BLOCKED;
@@ -325,8 +337,7 @@ int InsertInTheEnd (struct List* thou, double value, int position)
         if (EnlargeList (thou))
             return NO_FREE_MEMORY;
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     return oldHeadOfFree;
 }
@@ -335,8 +346,7 @@ int DeleteFromEnd (struct List* thou)
 {
     assert (thou);
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     int position = thou->tailOfValue;
     thou->status[position] = FREE;
@@ -349,8 +359,7 @@ int DeleteFromEnd (struct List* thou)
     thou->next[thou->tailOfFree] = position;
     thou->tailOfFree = position;
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     return NO_ERRORS;
 }
@@ -360,8 +369,7 @@ int DeleteFromBegin (struct List* thou)
     assert (thou);
     thou->normalized = false;
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     int position = thou->headOfValue;
     thou->status[position] = FREE;
@@ -374,8 +382,7 @@ int DeleteFromBegin (struct List* thou)
     thou->next[thou->tailOfFree] = position;
     thou->tailOfFree = position;
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     return NO_ERRORS;
 }
@@ -385,8 +392,7 @@ int DeleteFromMiddle (struct List* thou, int position)
     assert (thou);
     thou->normalized = false;
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     thou->status[position] = FREE;
     thou->sz--;
@@ -398,13 +404,12 @@ int DeleteFromMiddle (struct List* thou, int position)
     thou->next[thou->tailOfFree] = position;
     thou->tailOfFree = position;
 
-    if (ListVerificate(thou))
-        PictureDump (thou, "error", __LINE__);
+    ASSERTED
 
     return NO_ERRORS;
 }
 
-void TextDump (struct List* thou, char* reason, int line)
+int TextDump (struct List* thou, char* reason, int line)
 {
     if (!thou)
         printf ("there is no List. Executed on line %d", line);
@@ -429,9 +434,11 @@ void TextDump (struct List* thou, char* reason, int line)
         fprintf (thou->list_logs, "\t}\n");
     }
     fprintf (thou->list_logs, "}\n");
+
+    return NO_ERRORS;
 }
 
-void PictureDump (struct List* thou, char* reason, int line)
+int PictureDump (struct List* thou, char* reason, int line)
 {
     if (!thou)
         printf ("there is no List. Executed on line %d", line);
@@ -477,6 +484,8 @@ void PictureDump (struct List* thou, char* reason, int line)
     fclose (thou->graph_logs);
     system ("dot -Tpng graph_picture.dot -o myGraph.png");
     system ("start myGraph.png");
+
+    return NO_ERRORS;
 }
 
 void SetSameRank (struct List* thou, int status)
@@ -494,6 +503,7 @@ void SetSameRank (struct List* thou, int status)
 int EnlargeList (struct List* thou)
 {
     assert (thou);
+
     int* tempIntPointer = (int*) realloc (thou->next, sizeof (*tempIntPointer) * (2 *  thou->capacity + 1));
     if (!tempIntPointer)
         return NO_FREE_MEMORY;
@@ -539,7 +549,7 @@ void PrepareFreeMemory (struct List* thou)
 
 int NormalizeListOrder (struct List* thou)
 {
-    if (ListVerificate (thou))
+    if (ListVerify (thou))
         return thou->errCode;
 
     double* normalOrder = (double*) calloc (sizeof(*normalOrder), thou->capacity + 1);
@@ -572,13 +582,14 @@ int NormalizeListOrder (struct List* thou)
         thou->prev[i] = -1;
         thou->status[i] = FREE;
     }
-
+    free (thou->values);
     thou->values = normalOrder;
     thou->normalized = true;
     thou->headOfValue = 1;
     thou->tailOfValue = thou->sz;
     thou->headOfFree = thou->sz + 1;
     thou->tailOfFree = thou->capacity;
+
     return NO_ERRORS;
 }
 
@@ -596,5 +607,23 @@ int FindValue (struct List* thou, double value)
     return 0;
 }
 
+#define ARGNAME(x) #x
 
+char* ErrorName (int error)
+{
+    switch (error)
+    {
+        case NO_ERRORS: return ARGNAME (NO_ERRORS);
+        case DOUBLE_INSERT: return ARGNAME (DOUBLE_INSERT);
+        case DELETE_NOTHING: return  ARGNAME (DELETE_NOTHING);
+        case LIST_INTERRUPT: return  ARGNAME (LIST_INTERRUPT);
+        case FREE_MEMORY_INTERRUPTION: return  ARGNAME (FREE_MEMORY_INTERRUPTION);
+        case UNKNOWN_ERROR: return ARGNAME (UNKNOWN_ERROR);
+        case NO_LIST: return ARGNAME (NO_LIST);
+        case NO_FREE_MEMORY: return ARGNAME (NO_FREE_MEMORY);
+        default: return ARGNAME (UNKNOWN_ERROR);
+    }
+}
 
+#undef ASSERTED
+#undef ARGNAME

@@ -27,7 +27,7 @@ int main() {
 
     //list.next[7] = 5;
 
-    ListVerificate (&list);
+    ListVerify (&list);
 
     NormalizeListOrder (&list);
 
