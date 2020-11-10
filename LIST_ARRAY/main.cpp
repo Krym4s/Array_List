@@ -9,25 +9,15 @@ int main() {
     ListConstruct (2, &list, logs, graph_logs, graph_logs_name);
     int oldpos = 3;
     int pos = InsertAfterIndex (&list, 12, 0);
-
     pos = InsertAfterIndex (&list, 13, pos);
-    //PictureDump (&list, "no_reason", __LINE__);
-
-    InsertAfterIndex (&list, 14, pos);
-
-
-    //system ("dot -Tpng graph_picture.dot -o myGraph.png");
-    //system ("start myGraph.png");
-
+    InsertAfterIndex (&list, 14, pos-1);
     InsertAfterIndex (&list, 124, 0);
 
     DeleteCurrentValue (&list, oldpos);
 
-
     InsertAfterIndex (&list, 12345, 0);
 
-    //list.next[4] = 7;
-
+    //list.data[4].next = 7;
     //list.next[7] = 5;
 
     ListVerify (&list);
@@ -35,9 +25,9 @@ int main() {
     //NormalizeListOrder (&list);
 
     TextDump (&list, "no_reason", __LINE__);
-
     PictureDump (&list, "no_reason", __LINE__);
-    //fclose (list.graph_logs);
+
+    ListDestruct (&list);
     //system ("dot -Tpng graph_picture.dot -o myGraph.png");
     //system ("start myGraph.png");
 

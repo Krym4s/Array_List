@@ -1,31 +1,32 @@
 digraph LIST{
 	rankdir = TB;
-0 [shape=record,color="yellow",label=" { 1.#QNAN |  <prev> 0 | <current> 0 | <next> 0 } "];
-1 [shape=record,color="blue",label=" { 12 |  <prev> 4 | <current> 1 | <next> 2 } "];
-2 [shape=record,color="blue",label=" { 13 |  <prev> 1 | <current> 2 | <next> 0 } "];
-3 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 3 | <next> 0 } "];
-4 [shape=record,color="blue",label=" { 124 |  <prev> 5 | <current> 4 | <next> 1 } "];
-5 [shape=record,color="blue",label=" { 12345 |  <prev> 0 | <current> 5 | <next> 4 } "];
-6 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 6 | <next> 7 } "];
-7 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 7 | <next> 8 } "];
-8 [shape=record,color="green",label=" { 1.#QNAN |  <prev> -1 | <current> 8 | <next> 3 } "];
+0 [shape=record,color="yellow4",style="filled",fillcolor="yellow1",label="  value = 1.#QNAN | { <prev> prev = 0 | <current> current =  0 | <next> next = 0 } "];
+1 [shape=record,color="blue4",style="filled",fillcolor="blue1",label="  value = 12 | { <prev> prev = 4 | <current> current =  1 | <next> next = 2 } "];
+2 [shape=record,color="blue4",style="filled",fillcolor="blue1",label="  value = 13 | { <prev> prev = 1 | <current> current =  2 | <next> next = 0 } "];
+3 [shape=record,color="green4",style="filled",fillcolor="green1",label="  value = 1.#QNAN | { <prev> prev = -1 | <current> current =  3 | <next> next = 0 } "];
+4 [shape=record,color="blue4",style="filled",fillcolor="blue1",label="  value = 124 | { <prev> prev = 5 | <current> current =  4 | <next> next = 1 } "];
+5 [shape=record,color="blue4",style="filled",fillcolor="blue1",label="  value = 12345 | { <prev> prev = 0 | <current> current =  5 | <next> next = 4 } "];
+6 [shape=record,color="green4",style="filled",fillcolor="green1",label="  value = 1.#QNAN | { <prev> prev = -1 | <current> current =  6 | <next> next = 7 } "];
+7 [shape=record,color="green4",style="filled",fillcolor="green1",label="  value = 1.#QNAN | { <prev> prev = -1 | <current> current =  7 | <next> next = 8 } "];
+8 [shape=record,color="green4",style="filled",fillcolor="green1",label="  value = 1.#QNAN | { <prev> prev = -1 | <current> current =  8 | <next> next = 3 } "];
 
 
 {rank = same;1;2;4;5;}
 {rank = same;0;}
 {rank = same;3;6;7;8;}
-	0:prev -> 0;
-	0:next -> 0;
-	1:prev -> 4;
-	1:next -> 2;
-	2:prev -> 1;
-	2:next -> 0;
-	3:next -> 0;
-	4:prev -> 5;
-	4:next -> 1;
-	5:prev -> 0;
-	5:next -> 4;
-	6:next -> 7;
-	7:next -> 8;
-	8:next -> 3;
+
+	0 -> 0;
+	0 -> 0;
+	1 -> 4;
+	1 -> 2;
+	2 -> 1;
+	2 -> 0;
+	3 -> 0;
+	4 -> 5;
+	4 -> 1;
+	5 -> 0;
+	5 -> 4;
+	6 -> 7;
+	7 -> 8;
+	8 -> 3;
 }

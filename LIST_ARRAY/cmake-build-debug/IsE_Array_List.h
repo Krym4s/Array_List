@@ -19,11 +19,6 @@ struct ListMember
 
 struct List
 {
-    double* values;
-    int* next;
-    int* prev;
-    int* status;
-
     struct ListMember* data;
 
     int headOfValue;
@@ -66,7 +61,7 @@ enum List_errors
 enum memberStatus
 {
     FREE = 0,
-    BLOCKED = 1,
+    BUSY = 1,
     ERROR = 2,
     HOLY = 3
 };
@@ -116,6 +111,8 @@ int FindValue (struct List* thou, double value);
 char* ErrorName (int error);
 
 int FindPhysIndex (struct List* thou, int logicIndex);
+
+int ListDestruct (struct List* thou);
 
 //int textDump (struct List* )
 #endif //LIST_ARRAY_ISE_ARRAY_LIST_H
